@@ -9,6 +9,7 @@
         android:targetSdkVersion="18" />
 
     <application
+        android:name="com.activeandroid.app.Application"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -22,6 +23,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="dvQuiz.db" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="5" />
     </application>
 
 </manifest>
