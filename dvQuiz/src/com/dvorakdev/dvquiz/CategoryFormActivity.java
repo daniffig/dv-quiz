@@ -1,5 +1,6 @@
 package com.dvorakdev.dvquiz;
 
+import com.dvorakdev.dvquiz.context.dvQuizContext;
 import com.dvorakdev.dvquiz.model.Category;
 
 import android.annotation.TargetApi;
@@ -13,6 +14,10 @@ import android.widget.Toast;
 import android.os.Build;
 
 public class CategoryFormActivity extends Activity {
+	
+	private Category category;
+	
+	private EditText categoryNameEditText;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +25,12 @@ public class CategoryFormActivity extends Activity {
 		setContentView(R.layout.activity_category_form);
 		// Show the Up button in the action bar.
 		setupActionBar();		
+		
+		this.categoryNameEditText = (EditText) this.findViewById(R.id.categoryNameEditText);
+		
+		this.category = (Category) dvQuizContext.getInstance().getValue("selectedCategory", new Category());
+		
+		this.categoryNameEditText.setText(this.category.getName());
 	}
 
 	/**
@@ -55,12 +66,10 @@ public class CategoryFormActivity extends Activity {
 	public void processForm(View view)
 	{
 		if (this.isValid())
-		{
-			Category aNewCategory = new Category();
+		{			
+			this.category.setName(this.categoryNameEditText.getText().toString());
 			
-			aNewCategory.setName(((EditText) this.findViewById(R.id.categoryNameEditText)).getText().toString());
-			
-			aNewCategory.save();
+			this.category.save();
 			
 			this.setResult(RESULT_OK);
 			
@@ -73,10 +82,8 @@ public class CategoryFormActivity extends Activity {
 	}
 	
 	public boolean isValid()
-	{
-		String aNewCategoryName = ((EditText) this.findViewById(R.id.categoryNameEditText)).getText().toString();
-		
-		if (Category.oneByName(aNewCategoryName) != null)
+	{		
+		if (Category.oneByName(this.categoryNameEditText.getText().toString()) != null)
 		{
 			return false;
 		}

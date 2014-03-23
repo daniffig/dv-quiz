@@ -7,6 +7,7 @@ import java.util.List;
 import com.dvorakdev.dvquiz.context.dvQuizContext;
 import com.dvorakdev.dvquiz.model.Category;
 import com.dvorakdev.dvquiz.model.Quiz;
+import com.dvorakdev.dvquiz.reference.dvQuizReference;
 import com.dvorakdev.lib.dvExpandableListAdapter;
 
 import android.app.Activity;
@@ -26,26 +27,19 @@ public class MainActivity extends Activity {
     private static final int CONTEXT_MENU_EDIT = 2;
 	private static final int CONTEXT_MENU_DELETE = 3;
 	
-	dvExpandableListAdapter listAdapter;
+	dvExpandableListAdapter<Category, Quiz> listAdapter;
     ExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    List<Category> listDataHeader;
+    HashMap<Category, List<Quiz>> listDataChild;
  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
- 
-        // get the listview
-        expListView = (ExpandableListView) findViewById(R.id.lvExp);
- 
+
         // preparing list data
-        prepareListData();
- 
-        listAdapter = new dvExpandableListAdapter(this, listDataHeader, listDataChild);
- 
-        // setting list adapter
-        expListView.setAdapter(listAdapter);
+        this.createListData();
+        this.loadListData();
 
         MainActivity.this.registerForContextMenu(expListView);
     }  
@@ -62,10 +56,10 @@ public class MainActivity extends Activity {
 		switch (ExpandableListView.getPackedPositionType(info.packedPosition))
 		{
 		case ExpandableListView.PACKED_POSITION_TYPE_GROUP:
-			aHeaderTitle = (String) this.listAdapter.getGroup(ExpandableListView.getPackedPositionGroup(info.packedPosition));			
+			aHeaderTitle = (String) this.listAdapter.getGroup(ExpandableListView.getPackedPositionGroup(info.packedPosition)).toString();			
 			break;
 		case ExpandableListView.PACKED_POSITION_TYPE_CHILD:
-			aHeaderTitle = (String) this.listAdapter.getChild(ExpandableListView.getPackedPositionGroup(info.packedPosition), ExpandableListView.getPackedPositionChild(info.packedPosition));
+			aHeaderTitle = (String) this.listAdapter.getChild(ExpandableListView.getPackedPositionGroup(info.packedPosition), ExpandableListView.getPackedPositionChild(info.packedPosition)).toString();
 			break;
 		default:
 			break;
@@ -84,22 +78,20 @@ public class MainActivity extends Activity {
 		switch (ExpandableListView.getPackedPositionType(info.packedPosition))
 		{
 		case ExpandableListView.PACKED_POSITION_TYPE_GROUP:
-			String aCategoryName = (String) this.listAdapter.getGroup(ExpandableListView.getPackedPositionGroup(info.packedPosition));
-			
-			Category selectedCategory = Category.oneByName(aCategoryName);
+			Category selectedCategory = (Category) this.listAdapter.getGroup(ExpandableListView.getPackedPositionGroup(info.packedPosition));
 			
 			switch (item.getItemId())
 			{
 			case CONTEXT_MENU_EDIT:
 				dvQuizContext.getInstance().setValue("selectedCategory", selectedCategory);
 				
-				this.startActivity(new Intent(this, CategoryFormActivity.class));
+				this.startActivityForResult(new Intent(this, CategoryFormActivity.class), dvQuizReference.ADD_NEW_CATEGORY.getReferenceValue());
 				
 				return true;
 			case CONTEXT_MENU_DELETE:
 				selectedCategory.delete();
 				
-				this.findViewById(R.layout.activity_main).invalidate();
+				this.redrawListData();
 				
 				Toast.makeText(MainActivity.this, String.format(this.getString(R.string.info_object_successfully_delete), selectedCategory.toString()), Toast.LENGTH_SHORT).show();
 				
@@ -107,17 +99,22 @@ public class MainActivity extends Activity {
 			}
 			
 			break;
-		case ExpandableListView.PACKED_POSITION_TYPE_CHILD:
-			String aQuizName = (String) this.listAdapter.getChild(ExpandableListView.getPackedPositionGroup(info.packedPosition), ExpandableListView.getPackedPositionChild(info.packedPosition));
+		case ExpandableListView.PACKED_POSITION_TYPE_CHILD:			
+			Quiz selectedQuiz = (Quiz) this.listAdapter.getChild(ExpandableListView.getPackedPositionGroup(info.packedPosition), ExpandableListView.getPackedPositionChild(info.packedPosition));
 			
 			switch (item.getItemId())
 			{
 			case CONTEXT_MENU_EDIT:
-				Toast.makeText(MainActivity.this, Quiz.oneByName(aQuizName).toString(), Toast.LENGTH_SHORT).show();
-
+				dvQuizContext.getInstance().setValue("selectedCategory", selectedQuiz);
+				
+				this.startActivity(new Intent(this, QuizFormActivity.class));
 				return true;
 			case CONTEXT_MENU_DELETE:
-				Toast.makeText(MainActivity.this, Quiz.oneByName(aQuizName).toString(), Toast.LENGTH_SHORT).show();
+				selectedQuiz.delete();
+				
+				this.redrawListData();
+				
+				Toast.makeText(MainActivity.this, String.format(this.getString(R.string.info_object_successfully_delete), selectedQuiz.toString()), Toast.LENGTH_SHORT).show();
 
 				return true;
 			}
@@ -125,8 +122,6 @@ public class MainActivity extends Activity {
 		default:
 			return false;
 		}
-		
-		this.prepareListData();
     	
     	return false;  
     }  
@@ -142,11 +137,11 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
-        	case R.id.action_add_category:
-	        	this.startActivity(new Intent(this, CategoryFormActivity.class));
+        	case R.id.action_add_category:				
+				this.startActivityForResult(new Intent(this, CategoryFormActivity.class), dvQuizReference.ADD_NEW_CATEGORY.getReferenceValue());     	
 	            return true;
 	        case R.id.action_add_quiz:
-	        	this.startActivity(new Intent(this, QuizFormActivity.class));
+				this.startActivityForResult(new Intent(this, QuizFormActivity.class), dvQuizReference.ADD_NEW_QUIZ.getReferenceValue());  
 	            return true;
 	        case R.id.action_settings:
 	            return true;
@@ -182,22 +177,53 @@ public class MainActivity extends Activity {
     /*
      * Preparing the list data
      */
-    private void prepareListData() {
-        listDataHeader = new ArrayList<String>();
-        listDataChild = new HashMap<String, List<String>>();        
+    private void loadListData() {
+        listDataHeader = new ArrayList<Category>();
+        listDataChild = new HashMap<Category, List<Quiz>>();      
+ 
+        // get the listview
+        expListView = (ExpandableListView) findViewById(R.id.lvExp);  
         
         for (Category aCategory : Category.allOrderBy("Name ASC"))
         {
-            List<String> aQuizList = new ArrayList<String>();
+            List<Quiz> aQuizList = new ArrayList<Quiz>();
             
-            listDataHeader.add(aCategory.toString());
+            listDataHeader.add(aCategory);
             
             for (Quiz aQuiz : aCategory.getQuizzesOrderBy("Name ASC"))
             {
-            	aQuizList.add(aQuiz.toString());           	
+            	aQuizList.add(aQuiz);           	
             }
             
-            listDataChild.put(aCategory.toString(), aQuizList);        	
+            listDataChild.put(aCategory, aQuizList);        	
         }
+ 
+        listAdapter = new dvExpandableListAdapter<Category, Quiz>(this, listDataHeader, listDataChild);
+ 
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
     }
+    
+    private void redrawListData()
+    {
+    	this.loadListData();
+    }
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+	    if (requestCode == dvQuizReference.ADD_NEW_CATEGORY.getReferenceValue()) {
+	    	
+	        if (resultCode == RESULT_OK) {
+	        	this.redrawListData();
+	        }
+	    }
+		
+	    if (requestCode == dvQuizReference.ADD_NEW_QUIZ.getReferenceValue()) {
+	    	
+	        if (resultCode == RESULT_OK) {
+	        	this.redrawListData();
+	        }
+	    }
+	}
 }

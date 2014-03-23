@@ -35,6 +35,11 @@ public class Category extends Model {
 	    return new Select().from(Quiz.class).where("Category = ?", this.getId()).orderBy("Name ASC").execute();		
 	}
 	
+	public Quiz getQuizByName(String aQuizName)
+	{
+	    return new Select().from(Quiz.class).where("Category = ? AND Name = ?", this.getId(), aQuizName).executeSingle();		
+	}
+	
 	public static Category oneByName(String aCategoryName)
 	{
 		return new Select().from(Category.class).where("Name = ?", aCategoryName).executeSingle();

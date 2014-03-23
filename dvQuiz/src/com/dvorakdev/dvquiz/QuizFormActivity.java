@@ -1,30 +1,43 @@
 package com.dvorakdev.dvquiz;
 
+import com.dvorakdev.dvquiz.context.dvQuizContext;
 import com.dvorakdev.dvquiz.model.Category;
+import com.dvorakdev.dvquiz.model.Quiz;
 import com.dvorakdev.dvquiz.reference.dvQuizReference;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 import android.content.Intent;
 
 public class QuizFormActivity extends Activity {
 
+	private Quiz quiz;
+	
+	private Spinner categorySpinner;
+	private EditText quizNameEditText;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_quiz_form);
 		
-        Spinner s = (Spinner) findViewById(R.id.categorySpinner);
+		this.categorySpinner = (Spinner) findViewById(R.id.categorySpinner);
+		this.quizNameEditText = (EditText) this.findViewById(R.id.quizNameEditText);
+		
+		this.quiz = (Quiz) dvQuizContext.getInstance().getValue("selectedQuiz", new Quiz());
         
         ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(this,
         android.R.layout.simple_spinner_item, Category.allOrderBy("Name ASC"));
         
-        s.setAdapter(adapter);
+        this.categorySpinner.setAdapter(adapter);
 	}
 
 	@Override
@@ -51,6 +64,52 @@ public class QuizFormActivity extends Activity {
 			this.startActivityForResult(new Intent(this, CategoryFormActivity.class), dvQuizReference.ADD_NEW_CATEGORY.getReferenceValue());
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void processForm(View view)
+	{
+		if (this.isValid())
+		{			
+			this.quiz.setCategory((Category) this.categorySpinner.getAdapter().getItem(this.categorySpinner.getSelectedItemPosition()));
+			this.quiz.setName(this.quizNameEditText.getText().toString());
+			
+			this.quiz.save();
+			
+			this.setResult(RESULT_OK);
+			
+			this.finish();
+		}
+		else
+		{
+			Toast.makeText(this, String.format(this.getString(R.string.error_object_already_exists), "Quiz"), Toast.LENGTH_SHORT).show();
+		}
+	}
+	
+	public boolean isValid()
+	{		
+		if (this.categorySpinner.getSelectedItemId() == -1)
+		{
+			return false;
+		}
+		
+		if (this.categorySpinner.getSelectedItem() == null)
+		{
+			return false;
+		}
+		
+		if (this.quizNameEditText.getText().toString() == "")
+		{
+			return false;
+		}
+		
+		Category selectedCategory = (Category) this.categorySpinner.getAdapter().getItem(this.categorySpinner.getSelectedItemPosition());
+		
+		if (selectedCategory.getQuizByName(this.quizNameEditText.getText().toString()) != null)
+		{
+			return false;
+		}
+		
+		return true;				
 	}
 	
 	@Override
