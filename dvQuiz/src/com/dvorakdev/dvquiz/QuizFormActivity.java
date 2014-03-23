@@ -1,12 +1,16 @@
 package com.dvorakdev.dvquiz;
 
+import com.dvorakdev.dvquiz.model.Category;
+import com.dvorakdev.dvquiz.reference.dvQuizReference;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.support.v4.app.NavUtils;
-import android.annotation.TargetApi;
-import android.os.Build;
+import android.content.Intent;
 
 public class QuizFormActivity extends Activity {
 
@@ -14,18 +18,13 @@ public class QuizFormActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_quiz_form);
-		// Show the Up button in the action bar.
-		setupActionBar();
-	}
-
-	/**
-	 * Set up the {@link android.app.ActionBar}, if the API is available.
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	private void setupActionBar() {
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-			getActionBar().setDisplayHomeAsUpEnabled(true);
-		}
+		
+        Spinner s = (Spinner) findViewById(R.id.categorySpinner);
+        
+        ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(this,
+        android.R.layout.simple_spinner_item, Category.allOrderBy("Name ASC"));
+        
+        s.setAdapter(adapter);
 	}
 
 	@Override
@@ -48,8 +47,27 @@ public class QuizFormActivity extends Activity {
 			//
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
+		case R.id.action_add_category:
+			this.startActivityForResult(new Intent(this, CategoryFormActivity.class), dvQuizReference.ADD_NEW_CATEGORY.getReferenceValue());
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+	    if (requestCode == dvQuizReference.ADD_NEW_CATEGORY.getReferenceValue()) {
+	    	
+	        if (resultCode == RESULT_OK) {
+	    		
+	            Spinner s = (Spinner) findViewById(R.id.categorySpinner);
+	            
+	            ArrayAdapter<Category> adapter = new ArrayAdapter<Category>(this,
+	            android.R.layout.simple_spinner_item, Category.allOrderBy("Name ASC"));
+	            
+	            s.setAdapter(adapter);
+	        }
+	    }
 	}
 
 }

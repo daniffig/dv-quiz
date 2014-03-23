@@ -1,10 +1,10 @@
-package com.dvorakdev.dvquiz.adapter;
+package com.dvorakdev.lib;
  
 import java.util.HashMap;
 import java.util.List;
 
 import com.dvorakdev.dvquiz.R;
- 
+
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;

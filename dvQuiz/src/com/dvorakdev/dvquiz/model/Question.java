@@ -4,15 +4,22 @@ import java.util.List;
 
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Column.ForeignKeyAction;
 import com.activeandroid.annotation.Table;
 
 @Table(name = "Question")
 public class Question extends Model {
 	
+	@Override
+	public String toString()
+	{
+		return this.getQuestion();
+	}
+	
 	@Column(name = "Quiz")
 	private Quiz quiz;
 	
-	@Column(name = "Question")
+	@Column(name = "Question", onDelete = ForeignKeyAction.CASCADE)
 	private String question;
 
 	@Column(name = "CorrectAnswer")	

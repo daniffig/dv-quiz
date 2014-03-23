@@ -3,7 +3,7 @@
     package="com.dvorakdev.dvquiz"
     android:versionCode="1"
     android:versionName="1.0" >
-        
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-sdk
@@ -15,8 +15,8 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" android:permission="android.permission.WRITE_EXTERNAL_STORAGE">
-       	
+        android:permission="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:theme="@style/AppTheme" >
         <activity
             android:name="com.dvorakdev.dvquiz.MainActivity"
             android:label="@string/app_name" >
@@ -41,6 +41,22 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.dvorakdev.ibdquiz.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.dvorakdev.dvquiz.CategoryFormActivity"
+            android:label="@string/title_activity_category_form"
+            android:parentActivityName="com.dvorakdev.dvquiz.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dvorakdev.dvquiz.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.dvorakdev.dvquiz.QuizActivity"
+            android:label="@string/title_activity_quiz"
+            android:parentActivityName="com.dvorakdev.dvquiz.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dvorakdev.dvquiz.MainActivity" />
         </activity>
     </application>
 
