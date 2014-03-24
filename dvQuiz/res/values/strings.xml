@@ -26,7 +26,7 @@
     <string name="no_file_selected"><i>No file selected</i></string>
     <string name="title_activity_quiz_result">Quiz Result</string>
     <string name="title_activity_about">About</string>
-    <string name="app_version">0.1.0/20140324</string>
+    <string name="app_version">0.1.1/20140324-alpha</string>
     <string name="daniffig_email">daniffig@gmail.com</string>
     <string name="app_homepage">https://github.com/daniffig/dv-quiz</string>
     <string name="Homepage">Homepage</string>
