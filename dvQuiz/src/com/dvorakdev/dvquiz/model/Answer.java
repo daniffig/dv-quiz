@@ -14,6 +14,16 @@ public class Answer extends Model {
 		return this.getAnswer();
 	}
 	
+	public Boolean isNew()
+	{
+		return this.getId() == null;
+	}
+	
+	public Boolean isCorrect()
+	{
+		return this.equals(this.getQuestion().getCorrectAnswer());
+	}
+	
 	@Column(name = "Question", onDelete = ForeignKeyAction.CASCADE)
 	private Question question;
 	

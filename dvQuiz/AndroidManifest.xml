@@ -13,7 +13,7 @@
     <application
         android:name="com.activeandroid.app.Application"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/dvquiz_launcher"
         android:label="@string/app_name"
         android:permission="android.permission.WRITE_EXTERNAL_STORAGE"
         android:theme="@style/AppTheme" >
@@ -53,6 +53,22 @@
         <activity
             android:name="com.dvorakdev.dvquiz.QuizActivity"
             android:label="@string/title_activity_quiz"
+            android:parentActivityName="com.dvorakdev.dvquiz.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dvorakdev.dvquiz.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.dvorakdev.dvquiz.QuizResultActivity"
+            android:label="@string/title_activity_quiz_result"
+            android:parentActivityName="com.dvorakdev.dvquiz.QuizActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.dvorakdev.dvquiz.QuizActivity" />
+        </activity>
+        <activity
+            android:name="com.dvorakdev.dvquiz.AboutActivity"
+            android:label="@string/title_activity_about"
             android:parentActivityName="com.dvorakdev.dvquiz.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

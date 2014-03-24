@@ -1,16 +1,81 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".QuizActivity" >
 
-    <TextView
+    <Spinner
+        android:id="@+id/quizQuestionSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:prompt="@string/select_a_question" />
+
+    <ScrollView
+        android:id="@+id/quizQuestionScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/quizBottomLayout"
+        android:layout_below="@+id/quizQuestionSpinner"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="@dimen/padding_bottom" >
+
+        <LinearLayout
+            android:id="@+id/quizQuestionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/quizQuestionTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/quiz_question" />
+
+            <RadioGroup
+                android:id="@+id/quizQuestionAnswerRadioGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+            </RadioGroup>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/quizBottomLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="14dp" >
+
+        <Button
+            android:id="@+id/quizActionPreviousQuestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="previousQuestion"
+            android:text="@string/previous" />
+
+        <Button
+            android:id="@+id/quizActionCheckAnswer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="checkAnswer"
+            android:text="@string/check" />
+
+        <Button
+            android:id="@+id/quizActionNextQuestion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="nextQuestion"
+            android:text="@string/next" />
+    </LinearLayout>
 
 </RelativeLayout>

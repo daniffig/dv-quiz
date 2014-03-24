@@ -14,6 +14,11 @@ public class Category extends Model {
 		return this.getName();
 	}
 	
+	public Boolean isNew()
+	{
+		return this.getId() == null;
+	}
+	
 	@Column(name = "Name")
 	private String name;
 

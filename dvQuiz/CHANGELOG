@@ -1,0 +1,11 @@
+2014-03-24	daniffig	<daniffig@gmail.com>
+
+	* Starting Model, Views and Controllers build.
+	
+	* Quizzes can be added using plain text files. UTF-8 encoding is required to display everything OK.
+	
+	* Questions can be navigated using the top spinner or the bottom actions 'Previous' and 'Next'.	
+	
+	* Answers can be checked using the action 'Check'.
+	
+	* Questions and Answers are displayed randomly.

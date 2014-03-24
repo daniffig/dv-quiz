@@ -27,7 +27,7 @@ public class dvQuizContext {
 	
 	public Object getValue(String aKey)
 	{
-		if (this.hasValue(aKey))
+		if (!this.hasValue(aKey))
 		{
 			return null;
 		}

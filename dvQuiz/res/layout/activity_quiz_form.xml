@@ -13,7 +13,8 @@
     <Spinner
         android:id="@+id/categorySpinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:prompt="@string/select_a_category" />
 
     <EditText
         android:id="@+id/quizNameEditText"
@@ -24,6 +25,19 @@
 
         <requestFocus />
     </EditText>
+
+    <TextView
+        android:id="@+id/quizFileNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_file_selected" />
+
+    <Button
+        android:id="@+id/quizSelectFileButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_a_file"
+        android:onClick="selectFile" />
 
     <Button
         android:id="@+id/quizSaveButton"

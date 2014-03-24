@@ -1,11 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.dvorakdev.dvquiz.QuizActivity" >
+    tools:context="com.dvorakdev.dvquiz.QuizResultActivity" >
 
     <item
-        android:id="@+id/action_submit_answers"
+        android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="@string/action_submit_answers" />
+        android:title="@string/action_settings"/>
 
 </menu>

@@ -1,0 +1,11 @@
+2014-03-24	daniffig	<daniffig@gmail.com>
+
+	*	A Quiz file must be an encrypted XML file, so authenticity can be assured.
+	
+	*	We should model Providers, so we can rely on who created the Quiz. A private/public key pair must be used.
+	
+	*	A 'Learning mode' could be useful to read the Questions and learn from their Answers.
+	
+	*	Styles could be better.
+	
+	*	The Quiz result activity must be implemented.

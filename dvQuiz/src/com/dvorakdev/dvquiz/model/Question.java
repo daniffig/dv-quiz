@@ -1,5 +1,6 @@
 package com.dvorakdev.dvquiz.model;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.activeandroid.Model;
@@ -16,10 +17,18 @@ public class Question extends Model {
 		return this.getQuestion();
 	}
 	
-	@Column(name = "Quiz")
+	public Boolean isNew()
+	{
+		return this.getId() == null;
+	}
+	
+	private List<Answer> answers;
+	private List<Answer> shuffledAnswers;
+	
+	@Column(name = "Quiz", onDelete = ForeignKeyAction.CASCADE)
 	private Quiz quiz;
 	
-	@Column(name = "Question", onDelete = ForeignKeyAction.CASCADE)
+	@Column(name = "Question")
 	private String question;
 
 	@Column(name = "CorrectAnswer")	
@@ -48,10 +57,47 @@ public class Question extends Model {
 	public void setQuiz(Quiz quiz) {
 		this.quiz = quiz;
 	}
+	
+	public Boolean isFirst()
+	{
+		return this.getQuiz().getQuestions().get(0).equals(this);
+	}
+	
+	public Boolean isLast()
+	{
+		return this.getQuiz().getQuestions().get(this.getQuiz().getQuestions().size() - 1).equals(this);
+	}
+	
+	public Boolean hasPrevious()
+	{
+		return !this.isFirst();
+	}
+	
+	public Boolean hasNext()
+	{
+		return !this.isLast();
+	}
 
     public List<Answer> getAnswers()
     {
-        return this.getMany(Answer.class, "Question");
+    	if (this.answers == null)
+    	{
+    		this.answers = this.getMany(Answer.class, "Question");
+    	}
+    	
+        return this.answers; 
+    }
+    
+    public List<Answer> getShuffledAnswers()
+    {
+    	if (this.shuffledAnswers == null)
+    	{
+    		this.shuffledAnswers = this.getAnswers();
+    		
+    		Collections.shuffle(this.shuffledAnswers);
+    	}
+    	
+        return this.shuffledAnswers; 
     }
     
     public static List<Question> all()

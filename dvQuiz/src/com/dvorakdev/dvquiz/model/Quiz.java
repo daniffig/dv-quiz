@@ -1,5 +1,6 @@
 package com.dvorakdev.dvquiz.model;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.activeandroid.Model;
@@ -14,6 +15,14 @@ public class Quiz extends Model {
 	{
 		return this.getName();
 	}
+	
+	public Boolean isNew()
+	{
+		return this.getId() == null;
+	}
+	
+	private List<Question> questions;
+	private List<Question> shuffledQuestions;
 	
 	@Column(name = "Category", onDelete = ForeignKeyAction.CASCADE)
 	private Category category;
@@ -39,7 +48,24 @@ public class Quiz extends Model {
 
     public List<Question> getQuestions()
     {
-        return this.getMany(Question.class, "Quiz");
+    	if (this.questions == null)
+    	{
+    		this.questions = this.getMany(Question.class, "Quiz");
+    	}
+    	
+        return this.questions;
+    }
+
+    public List<Question> getShuffledQuestions()
+    {
+    	if (this.shuffledQuestions == null)
+    	{
+    		this.shuffledQuestions = this.getQuestions();
+    		
+    		Collections.shuffle(this.shuffledQuestions);
+    	}
+    	
+        return this.shuffledQuestions;
     }
 	
 	public static Quiz oneByName(String aQuizName)

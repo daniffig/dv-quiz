@@ -11,6 +11,9 @@ import com.dvorakdev.dvquiz.reference.dvQuizReference;
 import com.dvorakdev.lib.dvExpandableListAdapter;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -19,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView.ExpandableListContextMenuInfo;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.Toast;
 import android.widget.ExpandableListView;
  
@@ -31,14 +35,14 @@ public class MainActivity extends Activity {
     ExpandableListView expListView;
     List<Category> listDataHeader;
     HashMap<Category, List<Quiz>> listDataChild;
+    
+    private Quiz selectedQuiz;
  
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // preparing list data
-        this.createListData();
+        
         this.loadListData();
 
         MainActivity.this.registerForContextMenu(expListView);
@@ -105,7 +109,7 @@ public class MainActivity extends Activity {
 			switch (item.getItemId())
 			{
 			case CONTEXT_MENU_EDIT:
-				dvQuizContext.getInstance().setValue("selectedCategory", selectedQuiz);
+				dvQuizContext.getInstance().setValue("selectedQuiz", selectedQuiz);
 				
 				this.startActivity(new Intent(this, QuizFormActivity.class));
 				return true;
@@ -137,41 +141,22 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
-        	case R.id.action_add_category:				
+        	case R.id.action_add_category:		
+	        	dvQuizContext.getInstance().setValue("selectedCategory", new Category());		
 				this.startActivityForResult(new Intent(this, CategoryFormActivity.class), dvQuizReference.ADD_NEW_CATEGORY.getReferenceValue());     	
 	            return true;
 	        case R.id.action_add_quiz:
+	        	dvQuizContext.getInstance().setValue("selectedQuiz", new Quiz());
 				this.startActivityForResult(new Intent(this, QuizFormActivity.class), dvQuizReference.ADD_NEW_QUIZ.getReferenceValue());  
 	            return true;
 	        case R.id.action_settings:
 	            return true;
+	        case R.id.action_about:
+	        	this.startActivity(new Intent(this, AboutActivity.class));
+	            return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
-	}
-	
-	private void createListData()
-	{        
-        Category.truncate();
-        
-        for (int i = 0; i < 3; i++)
-        {
-        	Category aCategory = new Category();
-        	
-        	aCategory.setName("Category " + i);
-        	
-        	aCategory.save();
-        	
-        	for (int j = 0; j < 3; j++)
-        	{
-        		Quiz aQuiz = new Quiz();
-        		
-        		aQuiz.setCategory(aCategory);
-        		aQuiz.setName(String.format("Quiz %d %d", i, j));
-        		
-        		aQuiz.save();
-        	}
-        }
 	}
  
     /*
@@ -202,6 +187,45 @@ public class MainActivity extends Activity {
  
         // setting list adapter
         expListView.setAdapter(listAdapter);
+        
+        expListView.setOnChildClickListener(new OnChildClickListener()
+        {
+
+			@Override
+			public boolean onChildClick(ExpandableListView parent, View v,
+					int groupPosition, int childPosition, long id) {
+				// TODO Auto-generated method stub
+		        //Ask the user if they want to quit
+
+    			selectedQuiz = (Quiz) MainActivity.this.listAdapter.getChild(groupPosition, childPosition);
+    			
+            	dvQuizContext.getInstance().setValue("selectedQuiz", selectedQuiz);
+				
+				// TODO i18n
+				AlertDialog.Builder confirmDialog = new AlertDialog.Builder(MainActivity.this);
+				
+				confirmDialog.setIcon(android.R.drawable.ic_dialog_info);
+				confirmDialog.setTitle("Start Quiz");
+				confirmDialog.setMessage(String.format("Do you want to start the Quiz: %s?", selectedQuiz.toString()));
+				confirmDialog.setPositiveButton("Yes", new OnClickListener()
+				{
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+		            	
+		            	MainActivity.this.startActivity(new Intent(MainActivity.this, QuizActivity.class));
+					}
+					
+				});				
+				confirmDialog.setNegativeButton("No", null);
+				
+				confirmDialog.show();
+		        
+		        return true;				
+			}
+        	
+        });
     }
     
     private void redrawListData()

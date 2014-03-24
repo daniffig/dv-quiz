@@ -3,7 +3,8 @@ package com.dvorakdev.dvquiz.reference;
 public enum dvQuizReference {
 
 	ADD_NEW_CATEGORY (2),
-	ADD_NEW_QUIZ (3);
+	ADD_NEW_QUIZ (3),
+	SELECT_QUIZ_FILE (5);
 	
 	private int referenceValue;
 	
